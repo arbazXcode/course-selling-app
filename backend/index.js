@@ -16,7 +16,7 @@ app.use("/api/v1/course", courseRouter);
 app.use("/api/v1/admin", adminRouter)
 
 async function main() {
-    await mongoose.connect("MONGO_URI=mongodb+srv://arbazdemo:arbaz123@cluster0.wgw5p.mongodb.net/course-selling-app");
+    await mongoose.connect(process.env.MONGO_URI);
     app.listen(3000, () => {
         console.log("db connected");
     })

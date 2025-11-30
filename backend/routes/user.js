@@ -2,6 +2,7 @@ import express from "express"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { userModel, courseModel, purchaseModel } from "../db.js";
+import authMiddleware from "../middleware/auth.middleware.js"
 
 const userRouter = express.Router()
 
@@ -88,7 +89,9 @@ userRouter.post("/login", async (req, res) => {
 
 router.post("/logout", (req, res) => {
     try {
-        res.clearCookie("token");
+        res.clearCookie("token", {
+            httpOnly: true
+        });
         return res.json({ message: "Logged out successfully." });
     } catch {
         return res.status(500).json({ message: "Failed to logout." });
@@ -96,9 +99,9 @@ router.post("/logout", (req, res) => {
 });
 
 
-router.get("/purchases", async function (req, res) {
+router.get("/purchases", authMiddleware, async function (req, res) {
     try {
-        const userId = req.user.id
+        const userId = req.user.userId
         if (!userId) {
             return res.status(401).json({
                 success: false,
